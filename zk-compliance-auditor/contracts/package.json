@@ -4,13 +4,19 @@
   "description": "Compact ZK Circuits for Compliance Auditing",
   "main": "index.js",
   "scripts": {
-    "build": "compact build",
-    "test": "compact test",
-    "deploy": "compact deploy"
+    "build": "compact compile ZKComplianceAuditor.compact .",
+    "test": "node ZKComplianceAuditor.test.ts",
+    "compile": "compact compile ZKComplianceAuditor.compact .",
+    "deploy:testnet": "tsx scripts/deploy.ts --network testnet",
+    "deploy:mainnet": "tsx scripts/deploy.ts --network mainnet",
+    "deploy": "tsx scripts/deploy.ts",
+    "verify": "tsx scripts/verify.ts",
+    "deploy:all": "npm run build && npm run deploy"
   },
   "dependencies": {
-    "@midnight-ntwrk/compact": "^1.0.0",
-    "@midnight-ntwrk/midnight-js-types": "^1.0.0"
+    "@midnight-ntwrk/compact-runtime": "^0.8.1",
+    "@midnight-ntwrk/midnight-js-contracts": "^2.0.2",
+    "@midnight-ntwrk/midnight-js-utils": "^2.0.2"
   },
   "devDependencies": {
     "typescript": "^5.2.2"

@@ -10,12 +10,18 @@ import { ZKComplianceProver } from './ZKComplianceProver';
 async function runDemo() {
   console.log('🌟 ZK Compliance Auditor Demo Starting...\n');
   
-  // Initialize the prover client
+  // Initialize the prover client with Midnight Protocol
   const prover = new ZKComplianceProver({
-    rpcUrl: 'https://testnet.midnight.network', // Mock URL for demo
+    rpcUrl: 'https://testnet.midnight.network',
     contractAddress: '0x1234567890abcdef1234567890abcdef12345678',
-    privateKey: 'demo-private-key'
+    privateKey: 'demo-private-key',
+    networkId: 'testnet',
+    apiKey: process.env.MIDNIGHT_API_KEY,
+    proofServerUrl: process.env.MIDNIGHT_PROOF_SERVER_URL
   });
+
+  // Initialize connection to Midnight Protocol
+  await prover.initialize();
   
   // Test different employee scenarios
   const testCases = [
@@ -45,8 +51,8 @@ async function runDemo() {
     
     try {
       const result = await prover.runComplianceAudit(testCase.employeeId, {
-        policy_hash: '12345abcdef',
-        audit_id: `audit_${Date.now()}`,
+        policy_hash: `0x${'12345abcdef'.padEnd(16, '0')}`,
+        audit_id: `0x${Date.now().toString(16)}`,
         auditor_public_key: 'auditor_public_key_demo'
       });
       

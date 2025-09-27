@@ -2,12 +2,20 @@
  * Updated ZK Compliance Prover Client with mock implementations
  */
 
-import { MidnightJSSDK, PrivateStateManager } from './MockMidnightSDK';
+import { MidnightSDKAdapter, createSDKFromEnvironment } from './MidnightSDKAdapter';
+import { MidnightPrivateStateManager } from './MidnightProtocolSDK';
+import { DataService, EmployeeTrainingRecord, CompliancePolicy } from './DataService';
 
-// Environment variables simulation for demo
-const mockEnv = {
-  PROVER_PRIVATE_KEY: 'demo-private-key-12345',
-  ENCRYPTION_KEY: 'demo-encryption-key-67890'
+// Load environment variables
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Environment variables for Midnight Protocol
+const env = {
+  PROVER_PRIVATE_KEY: process.env.MIDNIGHT_PRIVATE_KEY || 'demo-private-key-12345',
+  ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || 'demo-encryption-key-67890',
+  WALLET_ADDRESS: process.env.MIDNIGHT_WALLET_ADDRESS || '',
+  MNEMONIC: process.env.MIDNIGHT_MNEMONIC || ''
 };
 
 // Types for our compliance data
@@ -37,51 +45,123 @@ export interface ComplianceProof {
  * Main ZK Compliance Prover Class
  */
 export class ZKComplianceProver {
-  private midnightSDK: MidnightJSSDK;
-  private privateStateManager: PrivateStateManager;
+  private midnightSDK: MidnightSDKAdapter;
+  private privateStateManager: MidnightPrivateStateManager;
+  private dataService: DataService;
   private contractAddress: string;
+  private privateKey: string;
   
   constructor(config: {
     rpcUrl: string;
     contractAddress: string;
     privateKey?: string;
+    networkId?: 'testnet' | 'mainnet';
+    apiKey?: string;
+    proofServerUrl?: string;
   }) {
     this.contractAddress = config.contractAddress;
+    this.privateKey = config.privateKey || env.PROVER_PRIVATE_KEY;
     
-    // Initialize Midnight SDK (mock version for demo)
-    this.midnightSDK = new MidnightJSSDK({
+    // Initialize Midnight SDK Adapter with official SDK only
+    this.midnightSDK = new MidnightSDKAdapter({
       rpcUrl: config.rpcUrl,
-      privateKey: config.privateKey || mockEnv.PROVER_PRIVATE_KEY
-    });
+      networkId: config.networkId || 'testnet',
+      apiKey: config.apiKey,
+      proofServerUrl: config.proofServerUrl,
+      wallet: {
+        privateKey: this.privateKey,
+        address: this.getWalletAddress()
+      }
+    }, true); // Always use official SDK
     
-    // Initialize private state management (mock version for demo)
-    this.privateStateManager = new PrivateStateManager({
-      encryptionKey: mockEnv.ENCRYPTION_KEY
-    });
+    // Initialize private state management
+    this.privateStateManager = new MidnightPrivateStateManager(
+      env.ENCRYPTION_KEY,
+      this.midnightSDK as any // Type assertion for compatibility
+    );
+    
+    // Initialize data service
+    this.dataService = new DataService(this.privateStateManager);
   }
   
   /**
-   * Securely load private training data from local storage or user input
+   * Get wallet address from private key
+   */
+  private getWalletAddress(): string {
+    // Use wallet address from environment if available
+    if (env.WALLET_ADDRESS) {
+      return env.WALLET_ADDRESS;
+    }
+    
+    // TODO: Implement proper address derivation from private key using official packages
+    // For now, return a mock address
+    return '0x' + this.privateKey.substring(0, 40).padEnd(40, '0');
+  }
+
+  /**
+   * Initialize connection to Midnight Protocol network
+   */
+  async initialize(): Promise<void> {
+    try {
+      console.log('🚀 Initializing ZK Compliance Prover...');
+      await this.midnightSDK.connect();
+      await this.dataService.initialize();
+      console.log('✅ ZK Compliance Prover initialized successfully');
+    } catch (error) {
+      console.error('❌ Failed to initialize ZK Compliance Prover:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Securely load private training data from DataService
    */
   async loadPrivateData(employeeId: string): Promise<PrivateTrainingData> {
     try {
-      // In a real implementation, this would:
-      // 1. Decrypt data from secure local storage
-      // 2. Validate data integrity
-      // 3. Ensure data hasn't been tampered with
+      console.log(`🔓 Loading private training data for employee: ${employeeId}`);
       
-      const encryptedData = await this.privateStateManager.retrieve(employeeId);
+      // Load data from DataService
+      const employeeData = await this.dataService.getEmployee(employeeId);
       
-      if (!encryptedData) {
+      if (!employeeData) {
         throw new Error('No private training data found for employee');
       }
       
-      const decryptedData = await this.privateStateManager.decrypt(encryptedData);
-      return JSON.parse(decryptedData) as PrivateTrainingData;
+      // Convert to PrivateTrainingData format
+      const privateData: PrivateTrainingData = {
+        employeeId: employeeData.employeeId,
+        trainingA_date: employeeData.trainingA_date,
+        trainingB_score: employeeData.trainingB_score,
+        departmentId: employeeData.department,
+        sensitiveNotes: employeeData.sensitiveNotes
+      };
+      
+      // Validate data integrity
+      this.validatePrivateData(privateData);
+      
+      console.log(`✅ Private training data loaded for employee: ${employeeId}`);
+      return privateData;
       
     } catch (error: any) {
       console.error('Error loading private data:', error);
       throw new Error('Failed to load private training data');
+    }
+  }
+
+  /**
+   * Validate private data integrity
+   */
+  private validatePrivateData(data: PrivateTrainingData): void {
+    if (!data.employeeId || !data.trainingA_date || !data.trainingB_score || !data.departmentId) {
+      throw new Error('Invalid private data: missing required fields');
+    }
+    
+    if (data.trainingB_score < 0 || data.trainingB_score > 100) {
+      throw new Error('Invalid private data: training score out of range');
+    }
+    
+    if (data.trainingA_date < 0) {
+      throw new Error('Invalid private data: invalid training date');
     }
   }
   
@@ -114,12 +194,12 @@ export class ZKComplianceProver {
         // Public inputs
         public: {
           current_time: BigInt(publicData.current_time),
-          policy_hash: BigInt('0x' + publicData.policy_hash.substring(0, 16)),
-          audit_id: BigInt('0x' + publicData.audit_id.substring(0, 16))
+          policy_hash: BigInt(publicData.policy_hash.startsWith('0x') ? publicData.policy_hash : '0x' + publicData.policy_hash),
+          audit_id: BigInt(publicData.audit_id.startsWith('0x') ? publicData.audit_id : '0x' + publicData.audit_id)
         }
       };
       
-      // Generate the ZK proof using Midnight SDK
+      // Generate the ZK proof using Midnight Protocol SDK
       const proof = await this.midnightSDK.generateProof({
         contractAddress: this.contractAddress,
         method: 'verifyTrainingCompliance',

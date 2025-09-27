@@ -15,13 +15,7 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 class ProjectBuilder {
   constructor() {
     this.buildSteps = [
-      {
-        name: 'Mock Data System',
-        path: 'mock-data',
-        command: 'npm',
-        args: ['run', 'build'],
-        required: false
-      },
+      // Mock Data System removed - using real DataService
       {
         name: 'ZK Contracts',
         path: 'contracts', 

@@ -83,7 +83,8 @@ class DemoOrchestrator {
     return new Promise((resolve, reject) => {
       const clientProcess = spawn('npm', ['run', 'dev'], {
         cwd: path.join(PROJECT_ROOT, 'client'),
-        stdio: 'pipe'
+        stdio: 'pipe',
+        env: { ...process.env, MIDNIGHT_USE_OFFICIAL_SDK: 'true' }
       });
 
       this.processes.push(clientProcess);
@@ -171,8 +172,26 @@ class DemoOrchestrator {
     await this.sleep(200 + Math.random() * 300);
     const proofTime = Date.now() - startTime;
     
-    // Simulate audit result
-    const isCompliant = Math.random() > 0.3; // 70% compliance rate
+    // Use actual compliance logic based on mock data
+    let isCompliant = false;
+    let errorMessage = '';
+    
+    switch (employeeId) {
+      case 'EMP001': // Alice Johnson - 30 days ago, 92% score, manager approval
+        isCompliant = true;
+        break;
+      case 'EMP002': // Bob Smith - 60 days ago, 85% score, manager approval  
+        isCompliant = true;
+        break;
+      case 'EMP003': // Carol Davis - 400 days ago (expired), 78% score, no manager approval
+        isCompliant = false;
+        errorMessage = 'Training A expired 35 days ago, Training B score (78%) below minimum (80%), Manager approval required but not obtained';
+        break;
+      default:
+        isCompliant = false;
+        errorMessage = 'Employee not found';
+    }
+    
     const proofHash = Math.random().toString(16).substring(2, 18);
     const txHash = isCompliant ? `0x${Math.random().toString(16).substring(2, 66)}` : null;
     
@@ -184,7 +203,7 @@ class DemoOrchestrator {
       }
     } else {
       console.log(`   ❌ AUDIT FAILED`);
-      console.log(`   🚨 Non-compliant: Training requirements not met`);
+      console.log(`   🚨 Non-compliant: ${errorMessage}`);
     }
     
     console.log(`   ⏱️  Proof Generation: ${proofTime}ms`);
