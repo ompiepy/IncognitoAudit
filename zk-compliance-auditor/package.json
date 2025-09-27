@@ -1,0 +1,41 @@
+{
+  "name": "zk-compliance-auditor",
+  "version": "1.0.0",
+  "description": "Zero-Knowledge Compliance Auditor using Midnight Protocol",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../dashboard && npm install && cd ../mock-data && npm install && cd ../contracts && npm install",
+    "build": "node scripts/build-all.js",
+    "build:contracts": "cd contracts && npm run build",
+    "build:client": "cd client && npm run build", 
+    "build:dashboard": "cd dashboard && npm run build",
+    "build:mock-data": "cd mock-data && npm run build",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:dashboard\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "demo": "node scripts/demo-flow.js",
+    "quick-demo": "node scripts/quick-demo.js",
+    "setup": "npm run install-all && npm run build",
+    "test": "npm run test:contracts && npm run test:client",
+    "test:contracts": "cd contracts && npm test",
+    "test:client": "cd client && npm test"
+  },
+  "keywords": [
+    "zero-knowledge",
+    "compliance",
+    "midnight-protocol",
+    "blockchain",
+    "privacy",
+    "zk-proofs"
+  ],
+  "author": "zk-Compliance Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

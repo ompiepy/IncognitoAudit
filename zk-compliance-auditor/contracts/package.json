@@ -1,0 +1,18 @@
+{
+  "name": "zk-compliance-contracts",
+  "version": "1.0.0",
+  "description": "Compact ZK Circuits for Compliance Auditing",
+  "main": "index.js",
+  "scripts": {
+    "build": "compact build",
+    "test": "compact test",
+    "deploy": "compact deploy"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact": "^1.0.0",
+    "@midnight-ntwrk/midnight-js-types": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

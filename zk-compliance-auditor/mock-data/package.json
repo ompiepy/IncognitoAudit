@@ -1,0 +1,15 @@
+{
+  "name": "zk-compliance-mock-data",
+  "version": "1.0.0",
+  "description": "Mock data generation for ZK compliance demo",
+  "main": "MockDataGenerator.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.0"
+  }
+}
