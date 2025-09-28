@@ -1,4 +1,4 @@
-# ZK Compliance Auditor
+# IncognitoAudit
 
 A privacy-preserving compliance verification system that proves regulatory compliance without exposing sensitive employee data using zero-knowledge proofs on Midnight Protocol.
 
