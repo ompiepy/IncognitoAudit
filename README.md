@@ -4,7 +4,7 @@ A privacy-preserving compliance verification system that proves regulatory compl
 
 ## Overview
 
-The ZK Compliance Auditor solves the fundamental privacy-compliance paradox by enabling organizations to prove regulatory compliance without exposing sensitive employee information. Using zero-knowledge proofs, the system verifies that employees have completed required training and met compliance standards while keeping all personal data private.
+IncognitoAudit solves the fundamental privacy-compliance paradox by enabling organizations to prove regulatory compliance without exposing sensitive employee information. Using zero-knowledge proofs, the system verifies that employees have completed required training and met compliance standards while keeping all personal data private.
 
 ## Architecture
 
