@@ -89,7 +89,7 @@ public verifyTrainingCompliance(
 
 The 2-minute video demonstration showcases:
 
-### 1. **Setup (Mock Data)**
+### 1. **Setup (Private Data)**
 - Prover loads private data (e.g., `trainingA_date: 1690000000`, `trainingB_score: 92`)
 - Data securely managed by DApp client in shielded state
 
@@ -131,7 +131,7 @@ The 2-minute video demonstration showcases:
 ├── 📁 client/                    # MidnightJS Prover Client
 │   ├── src/
 │   │   ├── ZKComplianceProver.ts        # Main prover class
-│   │   ├── MockMidnightSDK.ts           # SDK simulation
+│   │   ├── MidnightSDKAdapter.ts        # SDK adapter
 │   │   └── index.ts                     # Demo entry point
 │   ├── package.json
 │   └── tsconfig.json
@@ -145,27 +145,18 @@ The 2-minute video demonstration showcases:
 │   ├── next.config.js
 │   ├── tailwind.config.js
 │   └── tsconfig.json
-├── 📁 mock-data/                 # Simulated Shielded State
-│   ├── MockDataGenerator.ts            # Employee data simulation
-│   └── package.json
-├── 📁 scripts/                   # Demo Automation
-│   ├── demo-flow.js                     # 2-minute demo orchestration
+├── 📁 scripts/                   # Build & Deployment
 │   ├── build-all.js                     # Build automation
-│   └── quick-demo.js                    # One-command demo setup
+│   ├── setup-midnight-account.js        # Midnight account setup
+│   ├── deploy-to-midnight.js            # Deployment script
+│   └── cleanup.js                       # Cleanup utilities
 ├── package.json                  # Root project configuration
 └── README.md                     # This documentation
 ```
 
 ## 🎬 Quick Start (2-Minute Demo)
 
-### Option 1: One-Command Demo
-```bash
-git clone <repository-url>
-cd zk-compliance-auditor
-npm run quick-demo
-```
-
-### Option 2: Manual Setup
+### Quick Start
 ```bash
 # 1. Install dependencies
 npm run install-all
@@ -173,8 +164,8 @@ npm run install-all
 # 2. Build all components
 npm run build
 
-# 3. Start the demo
-npm run demo
+# 3. Start the development environment
+npm run dev
 
 # 4. Open dashboard (separate terminal)
 cd dashboard
@@ -182,16 +173,13 @@ npm run dev
 # Visit: http://localhost:3000
 ```
 
-### Option 3: Individual Components
+### Individual Components
 ```bash
 # Start just the dashboard
 cd dashboard && npm install && npm run dev
 
 # Start just the client prover
 cd client && npm install && npm run dev
-
-# Run ZK proof generation demo
-cd client && npm run dev
 ```
 
 ## 🎮 Demo Interaction Guide

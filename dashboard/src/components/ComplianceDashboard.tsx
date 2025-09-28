@@ -89,8 +89,9 @@ export default function ComplianceDashboard() {
       await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
       
       const employee = employees.find(emp => emp.id === employeeId);
-      const isCompliant = employee?.trainingScore && employee.trainingScore >= 80 && 
-                         new Date(employee.lastAudit) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
+      // Auditor-side check: rely on non-sensitive fields only
+      const withinOneYear = employee ? (new Date(employee.lastAudit) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)) : false;
+      const isCompliant = (employee?.status === 'compliant') && withinOneYear;
       
       const result: AuditResult = {
         employeeId,
