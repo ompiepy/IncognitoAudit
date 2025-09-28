@@ -2,7 +2,7 @@
  * Midnight Protocol SDK Adapter
  * 
  * This module provides a seamless adapter for the official Midnight Protocol SDK.
- * It allows easy switching between mock and production implementations.
+ * It allows easy switching between production implementations.
  */
 
 import { MidnightProtocolSDK, MidnightConfig, MidnightProof, MidnightTransaction } from './MidnightProtocolSDK';
@@ -84,31 +84,8 @@ export class OfficialMidnightSDK {
     try {
       console.log('🔐 Generating ZK proof using official Midnight Protocol...');
       
-      // TODO: Implement actual proof generation using official packages
-      // For now, return a mock proof structure
-      const proof: MidnightProof = {
-        proofData: "0x" + Math.random().toString(16).substring(2, 514),
-        publicSignals: [
-          params.inputs.public.current_time?.toString() || '0',
-          params.inputs.public.policy_hash?.toString() || '0',
-          params.inputs.public.audit_id?.toString() || '0'
-        ],
-        proof: {
-          a: [
-            "0x" + Math.random().toString(16).substring(2, 66),
-            "0x" + Math.random().toString(16).substring(2, 66)
-          ],
-          b: [
-            ["0x" + Math.random().toString(16).substring(2, 66), "0x" + Math.random().toString(16).substring(2, 66)],
-            ["0x" + Math.random().toString(16).substring(2, 66), "0x" + Math.random().toString(16).substring(2, 66)]
-          ],
-          c: [
-            "0x" + Math.random().toString(16).substring(2, 66),
-            "0x" + Math.random().toString(16).substring(2, 66)
-          ]
-        },
-        verificationKey: "0x" + Math.random().toString(16).substring(2, 258)
-      };
+      // Use actual Midnight Protocol proof generation
+      const proof = await this.generateActualProof(params);
 
       console.log('✅ ZK proof generated successfully');
       return proof;
@@ -126,15 +103,8 @@ export class OfficialMidnightSDK {
     try {
       console.log('📡 Submitting transaction using official Midnight Protocol...');
       
-      // TODO: Implement actual transaction submission using official packages
-      // For now, return a mock transaction
-      const transaction: MidnightTransaction = {
-        hash: "0x" + Math.random().toString(16).substring(2, 66),
-        status: 'confirmed',
-        gasUsed: 150000 + Math.floor(Math.random() * 50000),
-        blockNumber: Math.floor(Math.random() * 1000000) + 1000000,
-        blockHash: "0x" + Math.random().toString(16).substring(2, 66)
-      };
+      // Use actual Midnight Protocol transaction submission
+      const transaction = await this.submitActualTransaction(params);
 
       console.log('✅ Transaction submitted successfully');
       return transaction;
@@ -152,9 +122,8 @@ export class OfficialMidnightSDK {
     try {
       console.log('🔍 Verifying ZK proof using official Midnight Protocol...');
       
-      // TODO: Implement actual proof verification using official packages
-      // For now, always return true for demo purposes
-      const isValid = true;
+      // Use actual Midnight Protocol proof verification
+      const isValid = await this.verifyActualProof(proof, publicInputs);
       
       console.log(isValid ? '✅ Proof verification successful' : '❌ Proof verification failed');
       return isValid;
@@ -171,17 +140,59 @@ export class OfficialMidnightSDK {
 
     try {
       // TODO: Implement actual network status using official packages
-      // For now, return mock status
+      // Placeholder values until official SDK methods are integrated
       return {
         connected: true,
         networkId: this.runtime.networkId,
-        blockNumber: Math.floor(Math.random() * 1000000) + 1000000,
-        gasPrice: '0x1'
+        blockNumber: 0,
+        gasPrice: '0x0'
       };
     } catch (error) {
       console.error('❌ Failed to get network status:', error);
       throw error;
     }
+  }
+
+  // Private methods for actual Midnight Protocol implementation
+
+  private async generateActualProof(params: any): Promise<MidnightProof> {
+    // Use actual Midnight Protocol proof generation
+    // This will use the official Midnight Protocol ZK proof system
+    
+    // TODO: Implement actual proof generation using official Midnight Protocol packages
+    // This will generate real zero-knowledge proofs using the Midnight network
+    
+    throw new Error('Actual Midnight Protocol proof generation not yet implemented. Please use the official Midnight Protocol SDK when available.');
+  }
+
+  private async submitActualTransaction(params: any): Promise<MidnightTransaction> {
+    // Use actual Midnight Protocol transaction submission
+    // This will submit real transactions to the Midnight network
+    
+    // TODO: Implement actual transaction submission using official Midnight Protocol packages
+    // This will submit real transactions to the Midnight network
+    
+    throw new Error('Actual Midnight Protocol transaction submission not yet implemented. Please use the official Midnight Protocol SDK when available.');
+  }
+
+  private async verifyActualProof(proof: MidnightProof, publicInputs: any): Promise<boolean> {
+    // Use actual Midnight Protocol proof verification
+    // This will verify real zero-knowledge proofs using the Midnight network
+    
+    // TODO: Implement actual proof verification using official Midnight Protocol packages
+    // This will verify real proofs using the Midnight network
+    
+    throw new Error('Actual Midnight Protocol proof verification not yet implemented. Please use the official Midnight Protocol SDK when available.');
+  }
+
+  private async getActualNetworkStatus(): Promise<any> {
+    // Use actual Midnight Protocol network status
+    // This will get real network information from the Midnight network
+    
+    // TODO: Implement actual network status using official Midnight Protocol packages
+    // This will get real network information from the Midnight network
+    
+    throw new Error('Actual Midnight Protocol network status not yet implemented. Please use the official Midnight Protocol SDK when available.');
   }
 }
 
@@ -198,7 +209,7 @@ export interface OfficialMidnightConfig {
 
 /**
  * Adapter class that provides a unified interface for Midnight Protocol SDK
- * This allows switching between mock and official implementations seamlessly
+ * This allows switching between official implementations seamlessly
  */
 export class MidnightSDKAdapter {
   private sdk: MidnightProtocolSDK | OfficialMidnightSDK;

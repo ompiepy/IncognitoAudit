@@ -57,6 +57,8 @@ export interface TransactionParams {
 export declare class MidnightProtocolSDK {
     private config;
     private isConnected;
+    private wallet;
+    private runtime;
     constructor(config: MidnightConfig);
     /**
      * Initialize connection to Midnight Protocol network
@@ -87,12 +89,10 @@ export declare class MidnightProtocolSDK {
      * Disconnect from Midnight Protocol network
      */
     disconnect(): Promise<void>;
-    private simulateConnection;
-    private generateRealProof;
-    private submitRealTransaction;
-    private verifyRealProof;
-    private generateMockProofData;
-    private randomHex;
+    private initializeMidnightSDK;
+    private generateActualProof;
+    private submitActualTransaction;
+    private verifyActualProof;
 }
 /**
  * Production Private State Manager for Midnight Protocol
@@ -112,7 +112,7 @@ export declare class MidnightPrivateStateManager {
      * Retrieve and decrypt data from Midnight Protocol's private state
      */
     retrieveDecrypted<T>(key: string): Promise<T | null>;
-    private encryptData;
-    private decryptData;
+    private storeActualEncryptedData;
+    private retrieveActualEncryptedData;
 }
 //# sourceMappingURL=MidnightProtocolSDK.d.ts.map

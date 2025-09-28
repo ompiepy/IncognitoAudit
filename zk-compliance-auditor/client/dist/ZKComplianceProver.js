@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Updated ZK Compliance Prover Client with mock implementations
+ * ZK Compliance Prover Client
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -53,8 +53,8 @@ class ZKComplianceProver {
             return env.WALLET_ADDRESS;
         }
         // TODO: Implement proper address derivation from private key using official packages
-        // For now, return a mock address
-        return '0x' + this.privateKey.substring(0, 40).padEnd(40, '0');
+        // Placeholder until official method integrated
+        return env.WALLET_ADDRESS || '';
     }
     /**
      * Initialize connection to Midnight Protocol network

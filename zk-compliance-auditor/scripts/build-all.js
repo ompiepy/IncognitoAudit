@@ -69,7 +69,7 @@ class ProjectBuilder {
   async installDependencies() {
     console.log('📦 Installing dependencies...\n');
     
-    const components = ['', 'contracts', 'client', 'dashboard', 'mock-data'];
+    const components = ['', 'contracts', 'client', 'dashboard'];
     
     for (const component of components) {
       const componentPath = component ? path.join(PROJECT_ROOT, component) : PROJECT_ROOT;

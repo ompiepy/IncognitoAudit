@@ -2,7 +2,7 @@
  * Midnight Protocol SDK Adapter
  *
  * This module provides a seamless adapter for the official Midnight Protocol SDK.
- * It allows easy switching between mock and production implementations.
+ * It allows easy switching between production implementations.
  */
 import { MidnightConfig, MidnightProof, MidnightTransaction } from './MidnightProtocolSDK';
 export declare class OfficialMidnightSDK {
@@ -17,6 +17,10 @@ export declare class OfficialMidnightSDK {
     submitTransaction(params: any): Promise<MidnightTransaction>;
     verifyProof(proof: MidnightProof, publicInputs: any): Promise<boolean>;
     getNetworkStatus(): Promise<any>;
+    private generateActualProof;
+    private submitActualTransaction;
+    private verifyActualProof;
+    private getActualNetworkStatus;
 }
 export interface OfficialMidnightConfig {
     rpcUrl: string;
@@ -30,7 +34,7 @@ export interface OfficialMidnightConfig {
 }
 /**
  * Adapter class that provides a unified interface for Midnight Protocol SDK
- * This allows switching between mock and official implementations seamlessly
+ * This allows switching between official implementations seamlessly
  */
 export declare class MidnightSDKAdapter {
     private sdk;

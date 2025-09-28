@@ -1,5 +1,5 @@
 /**
- * Updated ZK Compliance Prover Client with mock implementations
+ * ZK Compliance Prover Client
  */
 export interface PrivateTrainingData {
     employeeId: string;

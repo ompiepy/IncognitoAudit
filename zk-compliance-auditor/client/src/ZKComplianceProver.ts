@@ -1,5 +1,5 @@
 /**
- * Updated ZK Compliance Prover Client with mock implementations
+ * ZK Compliance Prover Client
  */
 
 import { MidnightSDKAdapter, createSDKFromEnvironment } from './MidnightSDKAdapter';
@@ -94,8 +94,8 @@ export class ZKComplianceProver {
     }
     
     // TODO: Implement proper address derivation from private key using official packages
-    // For now, return a mock address
-    return '0x' + this.privateKey.substring(0, 40).padEnd(40, '0');
+    // Placeholder until official method integrated
+    return env.WALLET_ADDRESS || '';
   }
 
   /**

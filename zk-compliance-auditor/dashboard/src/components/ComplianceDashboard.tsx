@@ -5,7 +5,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Users, CheckCircle, AlertTriangle, Clock, Lock } from 'lucide-react';
+import { Shield, Users, CheckCircle, AlertTriangle, Clock, Lock, FileText } from 'lucide-react';
 
 interface Employee {
   id: string;
@@ -13,7 +13,6 @@ interface Employee {
   department: string;
   status: 'compliant' | 'non-compliant' | 'pending';
   lastAudit: string;
-  trainingScore?: number;
 }
 
 interface AuditResult {
@@ -33,84 +32,47 @@ export default function ComplianceDashboard() {
   const [auditResults, setAuditResults] = useState<AuditResult[]>([]);
   const [isRunningAudit, setIsRunningAudit] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
+  const [policies, setPolicies] = useState<any[]>([]);
 
-  // Load real employee data on component mount
+  // Load data on component mount
   useEffect(() => {
-    const loadEmployeeData = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
         
-        // In a real implementation, this would call the DataService API
-        // For now, we'll simulate loading from a real data source
-        const response = await fetch('/api/employees');
-        if (response.ok) {
-          const data = await response.json();
-          setEmployees(data);
+        // Load employee data
+        const employeesResponse = await fetch('/api/employees');
+        if (employeesResponse.ok) {
+          const employeesData = await employeesResponse.json();
+          setEmployees(employeesData);
         } else {
-          // Fallback to mock data if API is not available
-          console.warn('API not available, using fallback data');
-          setEmployees([
-            {
-              id: 'EMP001',
-              name: 'Alice Johnson',
-              department: 'IT Security',
-              status: 'compliant',
-              lastAudit: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              trainingScore: 92
-            },
-            {
-              id: 'EMP002',
-              name: 'Bob Smith',
-              department: 'Human Resources',
-              status: 'compliant',
-              lastAudit: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              trainingScore: 85
-            },
-            {
-              id: 'EMP003',
-              name: 'Carol Davis',
-              department: 'Finance',
-              status: 'non-compliant',
-              lastAudit: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              trainingScore: 78
-            }
-          ]);
+          throw new Error('Failed to load employee data from API');
+        }
+
+        // Load audit results
+        const auditResponse = await fetch('/api/audit-results');
+        if (auditResponse.ok) {
+          const auditData = await auditResponse.json();
+          setAuditResults(auditData);
+        }
+
+        // Load policies
+        const policiesResponse = await fetch('/api/policies');
+        if (policiesResponse.ok) {
+          const policiesData = await policiesResponse.json();
+          setPolicies(policiesData);
         }
       } catch (error) {
-        console.error('Error loading employee data:', error);
-        // Use fallback data on error
-        setEmployees([
-          {
-            id: 'EMP001',
-            name: 'Alice Johnson',
-            department: 'IT Security',
-            status: 'compliant',
-            lastAudit: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trainingScore: 92
-          },
-          {
-            id: 'EMP002',
-            name: 'Bob Smith',
-            department: 'Human Resources',
-            status: 'compliant',
-            lastAudit: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trainingScore: 85
-          },
-          {
-            id: 'EMP003',
-            name: 'Carol Davis',
-            department: 'Finance',
-            status: 'non-compliant',
-            lastAudit: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            trainingScore: 78
-          }
-        ]);
+        console.error('Error loading data:', error);
+        setEmployees([]);
+        setAuditResults([]);
+        setPolicies([]);
       } finally {
         setLoading(false);
       }
     };
 
-    loadEmployeeData();
+    loadData();
   }, []);
 
   const runComplianceAudit = async (employeeId: string) => {
@@ -284,9 +246,6 @@ export default function ComplianceDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-midnight-400">
                     Last Audit: {employee.lastAudit}
-                    {employee.trainingScore && (
-                      <span className="ml-2">Score: {employee.trainingScore}%</span>
-                    )}
                   </div>
                   
                   <button
@@ -363,13 +322,40 @@ export default function ComplianceDashboard() {
 
       {/* Production Notice */}
       <div className="mt-8 glass-effect rounded-lg p-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <p className="text-midnight-300 text-sm">
-            🔐 <strong>Production Mode:</strong> This dashboard uses real cryptographic proofs generated 
-            using the Midnight Protocol. All compliance verifications are cryptographically secure 
-            and privacy-preserving.
-          </p>
+        {/* Policies Section */}
+        <div className="glass-effect rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+            <FileText className="w-5 h-5 mr-2" />
+            Compliance Policies
+          </h2>
+          
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {policies.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-midnight-400 mx-auto mb-3" />
+                <p className="text-midnight-400">No policies available</p>
+              </div>
+            ) : (
+              policies.map((policy) => (
+                <div key={policy.id} className="bg-midnight-800/50 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-medium text-white">{policy.name}</h3>
+                      <p className="text-sm text-midnight-300 mt-1">{policy.description}</p>
+                    </div>
+                    <span className="text-xs text-midnight-400 bg-midnight-700 px-2 py-1 rounded">
+                      {policy.department}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-midnight-400">
+                    <span>Min Score: {policy.minScore}%</span>
+                    <span>Validity: {policy.validityPeriod} days</span>
+                    <span>Updated: {policy.lastUpdated}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
