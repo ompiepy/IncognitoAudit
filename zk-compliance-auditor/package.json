@@ -7,7 +7,7 @@
     "install-all": "npm install && cd client && npm install && cd ../dashboard && npm install && cd ../mock-data && npm install && cd ../contracts && npm install",
     "build": "node scripts/build-all.js",
     "build:contracts": "cd contracts && npm run build",
-    "build:client": "cd client && npm run build", 
+    "build:client": "cd client && npm run build",
     "build:dashboard": "cd dashboard && npm run build",
     "build:mock-data": "cd mock-data && npm run build",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:dashboard\"",
@@ -31,7 +31,11 @@
     "test:midnight:official": "tsx scripts/test-midnight.ts --official-sdk --verbose",
     "test:all": "npm run test && npm run test:midnight",
     "start": "npm run dev",
-    "start:production": "NODE_ENV=production npm run dev"
+    "start:production": "NODE_ENV=production npm run dev",
+    "cleanup": "node scripts/cleanup.js",
+    "deploy:midnight": "node scripts/deploy-to-midnight.js",
+    "deploy:production": "NODE_ENV=production npm run deploy:midnight",
+    "test:simple": "node scripts/simple-test.js"
   },
   "keywords": [
     "zero-knowledge",
@@ -44,11 +48,12 @@
   "author": "zk-Compliance Team",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.8.0",
     "concurrently": "^8.2.2",
-    "typescript": "^5.2.2",
-    "@types/node": "^20.8.0"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.6.1",
+    "ethers": "^6.15.0"
   }
 }

@@ -1,0 +1,9 @@
+{
+  "contractAddress": "0x5b4ea53db9e211f7a1ab9f0eb7f308d91305b74a",
+  "transactionHash": "0xa6104936f796abc8ecb8b69d6f4ae9bd0fad4c1b4a216d5bdcf5485baff9c380",
+  "blockNumber": 2970695,
+  "gasUsed": 2251779,
+  "network": "testnet",
+  "deployedAt": "2025-09-28T07:07:40.027Z",
+  "rpcUrl": "https://testnet.midnight.network"
+}

@@ -213,9 +213,23 @@ class DemoOrchestrator {
   async cleanup() {
     console.log('\n🧹 Cleaning up processes...');
     
-    for (const process of this.processes) {
+    for (const proc of this.processes) {
       try {
-        process.kill('SIGTERM');
+        if (proc && !proc.killed) {
+          // Try graceful shutdown first
+          proc.kill('SIGTERM');
+          
+          // Force kill after 2 seconds if still running
+          setTimeout(() => {
+            if (proc && !proc.killed) {
+              try {
+                proc.kill('SIGKILL');
+              } catch (e) {
+                // Ignore errors on force kill
+              }
+            }
+          }, 2000);
+        }
       } catch (error) {
         console.warn('Error killing process:', error.message);
       }
@@ -223,6 +237,10 @@ class DemoOrchestrator {
     
     this.processes = [];
     this.isRunning = false;
+    
+    // Give processes time to clean up
+    await this.sleep(1000);
+    console.log('✅ Cleanup completed');
   }
 
   sleep(ms) {
@@ -231,13 +249,27 @@ class DemoOrchestrator {
 }
 
 // Handle process termination
+let isCleaningUp = false;
+
 process.on('SIGINT', async () => {
+  if (isCleaningUp) return;
+  isCleaningUp = true;
+  
   console.log('\n\n🛑 Demo interrupted by user');
+  
+  const demo = new DemoOrchestrator();
+  await demo.cleanup();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
+  if (isCleaningUp) return;
+  isCleaningUp = true;
+  
   console.log('\n\n🛑 Demo terminated');
+  
+  const demo = new DemoOrchestrator();
+  await demo.cleanup();
   process.exit(0);
 });
 
