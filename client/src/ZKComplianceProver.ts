@@ -8,7 +8,8 @@ import { DataService, EmployeeTrainingRecord, CompliancePolicy } from './DataSer
 
 // Load environment variables
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 // Environment variables for Midnight Protocol
 const env = {
